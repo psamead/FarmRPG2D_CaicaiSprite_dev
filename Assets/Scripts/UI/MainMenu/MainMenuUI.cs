@@ -1,28 +1,32 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using UnityEngine.EventSystems;
 
 public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] private Button startButton = null;
-    [SerializeField] private Button loadButton = null;
     [SerializeField] private Button quitButton = null;
     [SerializeField] private GameObject videoPanel = null;
     [SerializeField] private VideoPlayer introVideo = null;
     [SerializeField] private Image backgroundImage = null;
-    
+
     private bool isIntroPlaying = false;
 
     private void Start()
     {
         startButton.onClick.AddListener(StartGame);
-        loadButton.onClick.AddListener(OpenLoadGameMenu);
         quitButton.onClick.AddListener(QuitGame);
         
+EventSystem.current.SetSelectedGameObject(startButton.gameObject);
+
         videoPanel.SetActive(false);
-        introVideo.loopPointReached += OnVideoEnd;
+
+        if (introVideo != null)
+        {
+            introVideo.loopPointReached += OnVideoEnd;
+        }
     }
 
     private void Update()
@@ -32,7 +36,7 @@ public class MainMenuUI : MonoBehaviour
             // Skip video on any key press
             if (Input.anyKeyDown)
             {
-                LoadFarmScene();
+                LoadGame();
             }
         }
     }
@@ -41,7 +45,6 @@ public class MainMenuUI : MonoBehaviour
     {
         // Hide Main Menu UI
         startButton.gameObject.SetActive(false);
-        loadButton.gameObject.SetActive(false);
         quitButton.gameObject.SetActive(false);
         if (backgroundImage != null) backgroundImage.gameObject.SetActive(false);
 
@@ -55,24 +58,24 @@ public class MainMenuUI : MonoBehaviour
         else
         {
             // If no video assigned, jump straight to game
-            LoadFarmScene();
+            LoadGame();
         }
     }
 
     private void OnVideoEnd(VideoPlayer vp)
     {
-        LoadFarmScene();
+        LoadGame();
     }
 
-    private void LoadFarmScene()
+    /// <summary>
+    /// Loads the PersistentScene which will then bootstrap the game
+    /// via SceneControllerManager's Start() method (loading the starting scene, etc.)
+    /// </summary>
+    private void LoadGame()
     {
         isIntroPlaying = false;
-        SceneControllerManager.Instance.FadeAndLoadScene(SceneName.Scene1_Farm.ToString(), new Vector3(2.6f, 4.6f, 0f));
-    }
-
-    private void OpenLoadGameMenu()
-    {
-        UIManager.Instance.OpenLoadGameMenu();
+        introVideo.Stop();
+        SceneManager.LoadScene(Settings.PersistentScene);
     }
 
     private void QuitGame()

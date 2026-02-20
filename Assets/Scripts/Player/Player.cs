@@ -128,40 +128,26 @@ public class Player : SingletonMonobehavior<Player>, ISaveable
     {
         #region Player Input
 
-        if (SceneManager.GetActiveScene().name != SceneName.MainMenu.ToString())
-        {
-            // Ensure player is visible and enabled
-            GetComponent<SpriteRenderer>().enabled = true;
-            GetComponent<BoxCollider2D>().enabled = true;
+        if (!PlayerInputIsDisabled)
+        { 
+            ResetAnimationTriggers();
 
-            if (!PlayerInputIsDisabled)
-            { 
-                ResetAnimationTriggers();
+            PlayerMovementInput();
 
-                PlayerMovementInput();
+            PlayerWalkInput();
 
-                PlayerWalkInput();
+            PlayerClickInput();
 
-                PlayerClickInput();
+            PlayerTestInput();
 
-                PlayerTestInput();
-
-                // Send event to any listeners for player movement input
-                EventHandler.CallMovementEvent(xInput, yInput, isWalking, isRunning, isIdle, isCarrying,
-                        toolEffect,
-                        isUsingToolRight, isUsingToolLeft, isUsingToolUp, isUsingToolDown,
-                        isLiftingToolRight, isLiftingToolLeft, isLiftingToolUp, isLiftingToolDown,
-                        isPickingRight, isPickingLeft, isPickingUp, isPickingDown,
-                        isSwingingToolRight, isSwingingToolLeft, isSwingingToolUp, isSwingingToolDown,
-                        false, false, false, false);
-            }
-        }
-        else
-        {
-            // Hide player in Main Menu
-            GetComponent<SpriteRenderer>().enabled = false;
-            GetComponent<BoxCollider2D>().enabled = false;
-            PlayerInputIsDisabled = true;
+            // Send event to any listeners for player movement input
+            EventHandler.CallMovementEvent(xInput, yInput, isWalking, isRunning, isIdle, isCarrying,
+                    toolEffect,
+                    isUsingToolRight, isUsingToolLeft, isUsingToolUp, isUsingToolDown,
+                    isLiftingToolRight, isLiftingToolLeft, isLiftingToolUp, isLiftingToolDown,
+                    isPickingRight, isPickingLeft, isPickingUp, isPickingDown,
+                    isSwingingToolRight, isSwingingToolLeft, isSwingingToolUp, isSwingingToolDown,
+                    false, false, false, false);
         }
 
         #endregion Player Input
@@ -169,10 +155,7 @@ public class Player : SingletonMonobehavior<Player>, ISaveable
 
     private void FixedUpdate()
     {
-        if (SceneManager.GetActiveScene().name != SceneName.MainMenu.ToString())
-        {
-            PlayerMovement();
-        }
+        PlayerMovement();
     }
 
     private void PlayerMovement()
