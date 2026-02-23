@@ -19,7 +19,7 @@ public class MainMenuUI : MonoBehaviour
         startButton.onClick.AddListener(StartGame);
         quitButton.onClick.AddListener(QuitGame);
         
-EventSystem.current.SetSelectedGameObject(startButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(startButton.gameObject);
 
         videoPanel.SetActive(false);
 
